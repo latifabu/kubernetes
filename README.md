@@ -47,11 +47,18 @@ The New York Times:
 
 
 ### k8 architecture 
-![architecture](https://user-images.githubusercontent.com/98215575/156420651-a5cb6978-305d-42d5-8953-1b9a3b454d61.png)
 - When K8 is deployed it creates a cluster. 
 - A cluster contains machines called nodes that host containerised applications.
 - The control plane oversees nodes and pods in each cluster.
 
+![architecture](https://user-images.githubusercontent.com/98215575/156420651-a5cb6978-305d-42d5-8953-1b9a3b454d61.png)
+
+
+- **Nodes**:node is a virtual or physical machine that runs workloads. Each node contains the services necessary to run pods:
+- **Kubelet**	An agent that runs on each node in a cluster. It ensures that the containers running in a pod are in a healthy state.
+- **Pods**	A pod consists of containers and supplies shared storage, network resources and specifies how the containers will run.
+- **Control Plane**	The Control Plane is responsible for maintaining the desired end state of the Kubernetes cluster as defined by the developer.
+- **K-proxy**	A network proxy service that runs on each node in a given cluster. It maintains network rules on nodes that allow network communications to pods from within or outside the cluster.
 
 
 
