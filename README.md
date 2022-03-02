@@ -16,13 +16,18 @@
 - Automatic bin packing - Kubernetes places containers automatically based on the required resources and other restrictions without impairing availability. Automated rollouts and rollbacks: Kubernetes distributes changes to the software or the configuration using a rollout.
 
 
+
 ### Use cases
+![k8 use cases](https://user-images.githubusercontent.com/98215575/156419629-672a7567-6a83-4651-a040-9f9422ed9ed9.jpg)
 
 
 ### How does it benefit the business
 
+![k8 benefits](https://user-images.githubusercontent.com/98215575/156419278-7f283df7-258d-4f8e-bdd0-601a89aad016.png)
 
 ### k8 architecture 
+![architecture](https://user-images.githubusercontent.com/98215575/156420651-a5cb6978-305d-42d5-8953-1b9a3b454d61.png)
+
 
 ### What is self healing
 
