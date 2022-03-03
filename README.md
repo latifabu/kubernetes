@@ -266,8 +266,8 @@ spec:
 - The storage is highly avaliable
 - Can be accessed by all pods
 - Importance of volume, storage that does not depend on the pod lifecycle
-- 
-Another benefit:
+  
+#### Another benefit:
 - When auto-scaling comes into play
 - When a pod is destroyed and new ones spin up
 - The new nodes can access the volume
