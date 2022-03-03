@@ -70,3 +70,207 @@ The New York Times:
 - Kubernetes has a built-in mechanism for rollbacks.
 - Kubernetes and `kubectl` offer a simple mechanism to roll back changes to resources such as Deployments, StatefulSets and DaemonSets.
 - Kubernetes keeps a rolling revision history for pods, so you can roll back to any stored revision (the number of revisions is configurable with a default value of 10).
+
+
+### Kubernetes commands
+- `kubectl get name-service - deploy/deployment - service/svc - pods`
+- `kubectl create -f file.yml` e.g. `kubectl create -f nginx-deploy.yml`
+-`kubectl delete name-service deploy deploy-name` e.g `kubectl delete pods nginx-deployment-7d9b964898-5w88w `
+- `kubectl get service` or `kubectl get svc `for kubernetes service information
+- To see pods running: `kubectl get pods`
+- `kubectl` for official documentation
+- `kubectl explain svc`
+- `kubectl delete all --all` very dangerous 
+- `kubectl get all` - will name the pods, the status and if they are ready
+- `kubectl get pods`
+- `kubectl describe pods (nameofmongopod)` - can see pvc, image id etc, detailed infor
+- `kubectl delete pvc --all` deletes all persistent variables
+- `kubectl delete pvc [name]` - specific pvc
+- `kubectl delete all --all` very dangerous 
+ ### Creating pods:
+
+ Nginx-deploy.yml:
+
+```
+---
+# k8 is a yml file -
+# K8s works with API versions to declare the resources
+# we are going to create a deployment for our nginx-image
+# we will create 3 pods with this deployment
+# kubectl get name-service - deploy/deployment - service/svc - pods
+# kubectl create -f file.yml
+# kubectl delete name-service deploy deploy-name
+
+apiVersion: apps/v1 # which api call we need to make for k8 to make a deployment for us
+kind: Deployment # pod, service # replicaset # ASG
+metadata: # metadata to name your deployment - case insensitive
+  name: nginx-deployment
+
+spec: # labels and selectors are communication services between micro-services
+  selector:
+    matchLabels:
+      app: nginx # look for this label to match with k8s service
+
+  replicas: 3
+
+# template to use it's label for k8s to launch in the browser
+  template:
+    metadata:
+      labels:
+        app: nginx
+
+# define the container specs
+    spec:
+      containers:
+      - name: nginx
+        image: latifsparta/latif_nginx   # ahskhan/sre_nginx_test
+        ports:
+        - containerPort: 80
+
+        imagePullPolicy: Always
+
+```
+
+Nginx-svc.yml:
+- Map our localhost to port 80 using loadbalancers
+  
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-deployment
+  namespace: default
+  resourceVersion: "40883"
+  uid: 9190ab75-d61c-4ff4-a3d1-0d293fa8d72e
+#  creatinTimestamp: 
+
+spec:
+  ports:
+  - nodePort: 30442
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+      - hostname: localhost  
+```
+- **nodePort** - A NodePort service is the most primitive way to get external traffic directly to your service. NodePort, as the name implies, opens a specific port on all the Nodes (the VMs), and any traffic that is sent to this port is forwarded to the service."By default, the range of the service NodePorts is 30000-32768. This range contains 2768 ports, which means that you can create up to 2768 services with NodePorts."
+- **Load balancer** - A LoadBalancer service is the standard way to expose a service to the internet. On GKE, this will spin up a Network Load Balancer that will give you a single IP address that will forward all traffic to your service.
+
+### Deploying our app using Kubernetes
+
+```
+---
+apiVersion: apps/v1 #which api call we need to make for k8 to make a deployment for us
+kind: Deployment #tool for running local K8 clusters using Docker container "node"
+metadata: # metadate to name your deployment - case insenstive
+  name: node-deployment
+spec: # labels are selectors are communication services between micro-services
+  selector:
+    matchLabels:
+      app: node
+  
+  replicas: 3 # how many pods
+  template: # template to use it's label for k8s to launch in the browser
+    metadata:
+      labels:
+        app: node # visible name of pods 
+    spec:
+      containers:
+        - name: node
+          image: latifsparta/dockerapp:v2 #my image 
+          ports: 
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: mongodb://mongo:27017/posts
+          imagePullPolicy: IfNotPresent  # if image is not present on dockerhub, will pull from localhost
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node
+spec:
+  selector:
+    app: node
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: LoadBalancer     
+```
+### Mongodb deployment and persistent volume claim
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: storage
+              mountPath: /data/db
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: mongo-db
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+```
+### Volumes
+
+- When restarting a pod, the data is not persistent by default.
+- You have to configure the database to be persistent by using volumes.
+- Volumes save the data even when the pod is gone.
+- New pods will be able to read exisiting data from the storage
+- The storage is highly avaliable
+- Can be accessed by all pods
+- Importance of volume, storage that does not depend on the pod lifecycle
+- 
+Another benefit:
+- When auto-scaling comes into play
+- When a pod is destroyed and new ones spin up
+- The new nodes can access the volume
+- This cannot be done if the data is not persistent
+
+
