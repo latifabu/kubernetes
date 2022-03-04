@@ -283,4 +283,7 @@ spec:
 - https://aws.plainenglish.io/running-kubernetes-using-minikube-cluster-on-the-aws-cloud-4259df916a07
   
 **Security groups** 
-- 
+![image](https://user-images.githubusercontent.com/98215575/156834530-6019925d-d41f-4178-8974-ee19cdd93ab8.png)
+
+- Allowing all ports will, allow node.js to run
+- the range of the service NodePorts is 30000-32768
