@@ -273,4 +273,14 @@ spec:
 - The new nodes can access the volume
 - This cannot be done if the data is not persistent
 
-
+### Docker and K8 on EC2 instance
+- Launch an EC2 instance on AWS using ubuntu 18.04
+- Use a `t2 medium` instance type
+- storage `10gb -50gb`
+- Install docker: https://docs.docker.com/engine/install/ubuntu/
+- INstall docker: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+- Install minikube
+- https://aws.plainenglish.io/running-kubernetes-using-minikube-cluster-on-the-aws-cloud-4259df916a07
+  
+**Security groups** 
+- 
