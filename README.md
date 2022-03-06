@@ -287,3 +287,23 @@ spec:
 
 - Allowing all ports will, allow node.js to run
 - the range of the service NodePorts is 30000-32768
+
+**Pulling docker image**
+- run as root with `sudo -i`
+- pul image `docker pull <username>/<reponame>`
+- run image `docker run -d -p port:port username/reponame`
+- stop the container with `docker stop <container_id>`
+- copy from image to ec2 instance
+- Make a new dir
+- Into the new dir`docker cp <container name>:/usr/src/app .`
+- In the new dir add the yml files we created on localhost
+- run them with `kubectl create -f <filename.yml>`
+- run `kubectl get all` to see pod status
+- Pods should be up but we need to see them on our public IP
+- Our loadbalancer will say pending after entering `kubectl get all`
+- run `kubectl describe svc node` to get svc name and the desisred node namespace
+- run `kubectl patch svc <svc-name> -n <namespace> -p '{"spec": {"type": "LoadBalancer", "externalIPs":["ip"]}}'`
+- e.g. `kubectl patch svc node -n default -p '{"spec": {"type": "LoadBalancer", "externalIPs":["34.247.253.0"]}}'`
+- exposes the external port
+- enter the external port number after the instances public ip
+- e.g `172.31.71.218:30225`
